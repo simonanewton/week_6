@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+
+    <!-- Website Favicon -->
+    <link rel="shortcut icon" type="image/x-icon"
+        href="https://i.pinimg.com/originals/77/0b/80/770b805d5c99c7931366c2e84e88f251.png" />
+
+    <!-- Bootstrap Link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+    <!-- Font Awesome Link -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
+
+    <!-- CSS Stylesheet Link -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="p-4 bg-dark text-light text-center">
+        <h1>Weather Dashboard</h1>
+    </header>
+
+    <main class="container-fluid p-0 d-flex">
+
+        <div class="col-4 bg-light">
+
+            <h4 class="py-4 m-0">Search for a City:</h4>
+
+            <form class="mb-4 d-flex">
+                <input type="text" class="p-2 w-75 border-0" placeholder="Enter a city name here.">
+                <button type="submit" class="btn btn-primary border-0">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <div class="btn-group-vertical btn-group-toggle w-100 mb-4" data-toggle="buttons">
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option1">Austin
+                </label>
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option2">Chicago
+                </label>
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option3">New York
+                </label>
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option1">Orlando
+                </label>
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option2">San Fransico
+                </label>
+                <label class="btn btn-light p-4 border border-secondary">
+                    <input type="radio" id="option3">Seattle
+                </label>
+            </div>
+
+        </div>
+
+        <div class="col-8">
+
+            <div class="my-4 border border-secondary rounded">
+                <div class="px-4 pt-4">
+                    <h2 class="m-0 d-inline-block">Atlanta</h2>
+                    <h2 class="d-inline-block">(4/3/2020)</h2>
+                </div>
+
+                <ul class="list-group mb-4">
+                    <li class="list-group-item px-4 border-0">Temperature: </li>
+                    <li class="list-group-item px-4 border-0">Humidity: </li>
+                    <li class="list-group-item px-4 border-0">Wind Speed: </li>
+                    <li class="list-group-item px-4 border-0">UV Index: </li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="m-0 font-weight-bold">5-Day Forecast:</h3>
+                <div class="row row-cols-5 text-center mx-auto my-4">
+                    <div class="col p-3 bg-primary text-white border rounded">1</div>
+                    <div class="col p-3 bg-primary text-white border rounded">2</div>
+                    <div class="col p-3 bg-primary text-white border rounded">3</div>
+                    <div class="col p-3 bg-primary text-white border rounded">4</div>
+                    <div class="col p-3 bg-primary text-white border rounded">5</div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- JQuery Links -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <!-- Bootstrap Links -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <!-- JavaScript Link -->
+    <script src="./script.js"></script>
+</body>
+
+</html>

@@ -38,7 +38,7 @@ $(document).ready(function () {
     }
 
     function displayUVIndex(lat, lon) {
-        var queryURL = `http://api.openweathermap.org/data/2.5/uvi?appid=${APIkey}&lat=${lat}&lon=${lon}`;
+        var queryURL = `https://api.openweathermap.org/data/2.5/uvi?appid=${APIkey}&lat=${lat}&lon=${lon}`;
 
         $.ajax({
             url: queryURL,
@@ -49,7 +49,7 @@ $(document).ready(function () {
     }
 
     function displayWeather(city) {
-        var queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}`;
+        var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}`;
 
         $.ajax({
             url: queryURL,
@@ -67,7 +67,7 @@ $(document).ready(function () {
     }
 
     function displayForecast(city) {
-        queryURL = `http://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}`;
+        queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}`;
 
         console.log(queryURL);
 
@@ -88,9 +88,10 @@ $(document).ready(function () {
             });
 
             for (var i = 0; i < forecastArray.length; i++) {
+                $(`#day-${i + 1}-date`).text(moment().format('dddd') + " " + moment().format('l'));
                 $(`#day-${i + 1}-icon`).addClass(addIcon(forecastArray[i].weather[0].main));
                 $(`#day-${i + 1}-temp`).text("Temperature: " + convertTemp(forecastArray[i].main.temp));
-                $(`#day-${i + 1}-humid`).text("Humidity: " + forecastArray[i].main.humidity);
+                $(`#day-${i + 1}-humid`).text("Humidity: " + forecastArray[i].main.humidity + "%");
             }
 
 

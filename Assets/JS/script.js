@@ -11,11 +11,22 @@ $(document).ready(function () {
     var displayTemp = $("#display-temp");
     var displayHumid = $("#display-humid");
     var displayWind = $("#display-wind");
+    var displayUV = $("#display-UV");
     var displayIndex = $("#display-index");
 
     var APIkey = "5127b984f77556497cf3b63325863b1a";
 
+    var recentLocations;
+
     // -----------------------------------------------------------------------------------
+
+    function getRecentSearches() {
+        recentLocations = JSON.parse(localStorage.getItem("recentSearches"));
+
+        if (!recentLocations) {
+            recentLocations = ["Atlanta", "Chicago", "New York", "Orlando", "San Francisco", "Seattle", "Denver"];
+        }
+    }
 
     function convertTemp(Kelvin) {
         var Fahrenheit = ((Kelvin - 273.15) * 1.8) + 32;
@@ -39,6 +50,27 @@ $(document).ready(function () {
         }
     }
 
+    function colorCodeIndex(index) {
+        console.log(index);
+        console.log(typeof(index));
+        displayIndex.addClass("bg-warning text-white");
+
+        switch (index) {
+            case (index < 4):
+                displayIndex.addClass("bg-success text-white");
+                break;
+            case (index < 7):
+                displayIndex.addClass("bg-warning text-white");
+                break;
+            case (index < 11):
+                displayIndex.addClass("bg-danger text-white");
+                break;
+            case (index > 11):
+                displayIndex.addClass("bg-dark text-white");
+                break;
+        }
+    }
+
     function displayUVIndex(lat, lon) {
         var queryURL = `https://api.openweathermap.org/data/2.5/uvi?appid=${APIkey}&lat=${lat}&lon=${lon}`;
 
@@ -46,14 +78,14 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (response) {
-            displayIndex.text("UV Index: " + response.value);
+            displayUV.text("UV Index: ");
+            displayIndex.text(response.value);
+            // colorCodeIndex(response.value);
         });
     }
 
     function displayWeather(city) {
         var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}`;
-
-        console.log(queryURL);
 
         $.ajax({
             url: queryURL,
@@ -88,7 +120,7 @@ $(document).ready(function () {
             var forecastArray = [day1, day2, day3, day4, day5];
 
             for (var i = 0; i < forecastArray.length; i++) {
-                var nextDate = moment().add(i, 'days');
+                var nextDate = moment().add(i + 1, 'days');
                 $(`#day-${i + 1}-date`).text(nextDate.format('dddd') + " " + nextDate.format('l'));
                 $(`#day-${i + 1}-icon`).removeClass();
                 $(`#day-${i + 1}-icon`).addClass(addIcon(forecastArray[i].weather[0].main));
@@ -107,29 +139,18 @@ $(document).ready(function () {
         displayForecast(city);
     }
 
-    function enableSearchBar() {
-        searchInput.keyup(function (event) {
-            if (event.keyCode === "13") renderDisplay(searchInput.val());
-        });
-
-        searchButton.click(function () {
-            event.preventDefault();
-            renderDisplay(searchInput.val());
-        });
-    }
-
     function enableRadioButtons() {
-        var defaultLocations = ["Austin", "Chicago", "New York", "Orlando", "San Francisco", "Seattle", "Denver"];
+        radioDiv.empty();
 
-        defaultLocations.forEach(location => {
+        recentLocations.forEach(location => {
             var radioLabel = $("<label>");
             radioLabel.addClass("btn btn-light p-4 text-left border border-secondary");
             radioLabel.attr("value", location);
             radioLabel.text(location);
 
             radioLabel.click(function () {
-                console.log(radioLabel.attr("value"));
-                renderDisplay(radioLabel.attr("value"));
+                // console.log(location);
+                renderDisplay(location);
             });
 
             var radioInput = $("<input>");
@@ -141,18 +162,50 @@ $(document).ready(function () {
         });
     }
 
+    function enableSearchBar() {
+        searchInput.keyup(function (event) {
+            if (event.keyCode === "13") {
+
+                renderDisplay(searchInput.val());
+                
+                recentLocations.unshift(searchInput.val());
+                recentLocations.pop();
+                localStorage.setItem("recentSearches", JSON.stringify(recentLocations));
+
+                enableRadioButtons();
+            }
+        });
+
+        searchButton.click(function () {
+            event.preventDefault();
+
+            renderDisplay(searchInput.val());
+
+            recentLocations.unshift(searchInput.val());
+            recentLocations.pop();
+            localStorage.setItem("recentSearches", JSON.stringify(recentLocations));
+
+            enableRadioButtons();
+        });
+    }
+
     // -----------------------------------------------------------------------------------
 
     function main() {
-        // sets the default weather display
-        var defaultCity = "Atlanta"
-        renderDisplay(defaultCity);
+        // clears the localStorage for testing
+        // localStorage.clear();
+
+        // disp recent searches from localStorage
+        getRecentSearches();
+
+        // enables radio buttons functionality
+        enableRadioButtons();
 
         // enables search bar functionality
         enableSearchBar();
 
-        // enables radio buttons functionality
-        enableRadioButtons();
+        // sets the default weather display
+        renderDisplay(recentLocations[0]);
     }
 
     main();

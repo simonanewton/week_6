@@ -14,6 +14,11 @@ $(document).ready(function () {
     var displayUV = $("#display-UV");
     var displayIndex = $("#display-index");
 
+    // var forecastDate = $(".forecast-date");
+    // var forecastIcon = $(".forecast-icon");
+    // var forecastTemp = $(".forecast-temp");
+    // var forecastHumid = $(".forecast-humid");
+
     var APIkey = "5127b984f77556497cf3b63325863b1a";
 
     var recentLocations;
@@ -24,7 +29,7 @@ $(document).ready(function () {
         recentLocations = JSON.parse(localStorage.getItem("recentSearches"));
 
         if (!recentLocations) {
-            recentLocations = ["Atlanta", "Chicago", "New York", "Orlando", "San Francisco", "Seattle", "Denver"];
+            recentLocations = ["Atlanta, US", "Chicago, US", "New York, US", "Orlando, US", "San Francisco, US", "Seattle, US", "Denver, US"];
         }
     }
 
@@ -51,22 +56,38 @@ $(document).ready(function () {
     }
 
     function colorCodeIndex(index) {
-        console.log(index);
-        console.log(typeof(index));
-        displayIndex.addClass("bg-warning text-white");
+        // why the hell does this not work
+
+        // console.log(index);
+        // console.log(typeof(index));
+
+        // console.log("-----------");
+        // console.log("The index is less than 4: " + (index < 4));
+        // console.log("The index is less than 7: " + (index < 7));
+        // console.log("The index is less than 10: " + (index < 10));
+        // console.log("The index is greater than 10: " + (index > 10));
+        // console.log("-----------");
 
         switch (index) {
             case (index < 4):
+                console.log("Index is less than 4.");
                 displayIndex.addClass("bg-success text-white");
                 break;
             case (index < 7):
+                console.log("Index is less than 7.");
                 displayIndex.addClass("bg-warning text-white");
                 break;
-            case (index < 11):
+            case (index < 10):
+                console.log("Index is less than 10.");
                 displayIndex.addClass("bg-danger text-white");
                 break;
-            case (index > 11):
+            case (index > 10):
+                console.log("Index is greater than 10.");
                 displayIndex.addClass("bg-dark text-white");
+                break;
+            default:
+                console.log("Index is none of the above.");
+                displayIndex.addClass("bg-light text-dark");
                 break;
         }
     }
@@ -80,7 +101,7 @@ $(document).ready(function () {
         }).then(function (response) {
             displayUV.text("UV Index: ");
             displayIndex.text(response.value);
-            // colorCodeIndex(response.value);
+            colorCodeIndex(response.value);
         });
     }
 
@@ -111,6 +132,7 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (response) {
+            // needs to be fixed, add a function to find the same time for each day
             var day1 = response.list[0];
             var day2 = response.list[8];
             var day3 = response.list[16];
@@ -121,12 +143,22 @@ $(document).ready(function () {
 
             for (var i = 0; i < forecastArray.length; i++) {
                 var nextDate = moment().add(i + 1, 'days');
+
+                // what's a better way to do this? add a class?
                 $(`#day-${i + 1}-date`).text(nextDate.format('dddd') + " " + nextDate.format('l'));
                 $(`#day-${i + 1}-icon`).removeClass();
                 $(`#day-${i + 1}-icon`).addClass(addIcon(forecastArray[i].weather[0].main));
+                //$(`#day-${i + 1}-icon`).className = addIcon(forecastArray[i].weather[0].main)
                 $(`#day-${i + 1}-icon`).addClass("fa-3x py-4");
                 $(`#day-${i + 1}-temp`).text("Temperature: " + convertTemp(forecastArray[i].main.temp));
                 $(`#day-${i + 1}-humid`).text("Humidity: " + forecastArray[i].main.humidity + "%");
+
+                // $(".forecast-date").text(nextDate.format('dddd') + " " + nextDate.format('l'));
+                // $(".forecast-icon").removeClass();
+                // $(".forecast-icon").addClass(addIcon(forecastArray[i].weather[0].main));
+                // $(".forecast-icon").addClass("fa-3x py-4");
+                // $(".forecast-temp").text("Temperature: " + convertTemp(forecastArray[i].main.temp));
+                // $(".forecast-humid").text("Humidity: " + forecastArray[i].main.humidity + "%");
             }
         });
     }
@@ -163,37 +195,30 @@ $(document).ready(function () {
     }
 
     function enableSearchBar() {
-        searchInput.keyup(function (event) {
-            if (event.keyCode === "13") {
-
-                renderDisplay(searchInput.val());
-                
-                recentLocations.unshift(searchInput.val());
-                recentLocations.pop();
-                localStorage.setItem("recentSearches", JSON.stringify(recentLocations));
-
-                enableRadioButtons();
-            }
-        });
-
         searchButton.click(function () {
             event.preventDefault();
 
             renderDisplay(searchInput.val());
 
-            recentLocations.unshift(searchInput.val());
-            recentLocations.pop();
-            localStorage.setItem("recentSearches", JSON.stringify(recentLocations));
-
-            enableRadioButtons();
+            // would a call back be a better way to do this?
+            // why does enter work to submit the form, is it because it's in a form tag
+            setTimeout(function () {
+                if (displayCity.text() != recentLocations[0]) {
+                    recentLocations.unshift(displayCity.text());
+                    recentLocations.pop();
+                    localStorage.setItem("recentSearches", JSON.stringify(recentLocations));
+                    enableRadioButtons();
+                }
+            }, 200);
         });
     }
 
     // -----------------------------------------------------------------------------------
 
     function main() {
-        // clears the localStorage for testing
-        // localStorage.clear();
+        // to be removed
+        localStorage.clear();
+        console.clear();
 
         // disp recent searches from localStorage
         getRecentSearches();

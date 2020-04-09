@@ -7,17 +7,16 @@ $(document).ready(function () {
     var displayCity = $("#display-city");
     var displayDate = $("#display-date");
     var displayIcon = $("#display-icon");
-
     var displayTemp = $("#display-temp");
     var displayHumid = $("#display-humid");
     var displayWind = $("#display-wind");
     var displayUV = $("#display-UV");
     var displayIndex = $("#display-index");
 
-    // var forecastDate = $(".forecast-date");
-    // var forecastIcon = $(".forecast-icon");
-    // var forecastTemp = $(".forecast-temp");
-    // var forecastHumid = $(".forecast-humid");
+    var forecastDate = $(".forecast-date");
+    var forecastIcon = $(".forecast-icon");
+    var forecastTemp = $(".forecast-temp");
+    var forecastHumid = $(".forecast-humid");
 
     var APIkey = "5127b984f77556497cf3b63325863b1a";
 
@@ -29,13 +28,14 @@ $(document).ready(function () {
         recentLocations = JSON.parse(localStorage.getItem("recentSearches"));
 
         if (!recentLocations) {
-            recentLocations = ["Atlanta, US", "Chicago, US", "New York, US", "Orlando, US", "San Francisco, US", "Seattle, US", "Denver, US"];
+            recentLocations = ["Atlanta, US", "Chicago, US", "New York, US", "Orlando, US", 
+            "San Francisco, US", "Seattle, US", "Denver, US"];
         }
     }
 
     function convertTemp(Kelvin) {
         var Fahrenheit = ((Kelvin - 273.15) * 1.8) + 32;
-        return Math.round(Fahrenheit) + "°";
+        return Math.round(Fahrenheit) + " °F";
     }
 
     function addIcon(condition) {
@@ -70,23 +70,23 @@ $(document).ready(function () {
 
         switch (index) {
             case (index < 4):
-                console.log("Index is less than 4.");
+                // console.log("Index is less than 4.");
                 displayIndex.addClass("bg-success text-white");
                 break;
             case (index < 7):
-                console.log("Index is less than 7.");
+                // console.log("Index is less than 7.");
                 displayIndex.addClass("bg-warning text-white");
                 break;
             case (index < 10):
-                console.log("Index is less than 10.");
+                // console.log("Index is less than 10.");
                 displayIndex.addClass("bg-danger text-white");
                 break;
             case (index > 10):
-                console.log("Index is greater than 10.");
+                // console.log("Index is greater than 10.");
                 displayIndex.addClass("bg-dark text-white");
                 break;
             default:
-                console.log("Index is none of the above.");
+                // console.log("Index is none of the above.");
                 displayIndex.addClass("bg-light text-dark");
                 break;
         }
@@ -115,11 +115,10 @@ $(document).ready(function () {
             displayCity.text(response.name + ", " + response.sys.country);
             displayDate.text("(" + moment().format('l') + ")");
             displayIcon.removeClass();
-            displayIcon.addClass(addIcon(response.weather[0].main));
-            displayIcon.addClass("fa-2x px-2");
+            displayIcon.addClass(`${addIcon(response.weather[0].main)} fa-2x px-2`);
 
             displayTemp.text("Temperature: " + convertTemp(response.main.temp));
-            displayHumid.text("Humidity: " + response.main.humidity + "%");
+            displayHumid.text("Humidity: " + response.main.humidity + " %");
             displayWind.text("Wind Speed: " + response.wind.speed + " mph");
             displayUVIndex(response.coord.lat, response.coord.lon);
         });
@@ -132,33 +131,25 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (response) {
-            // needs to be fixed, add a function to find the same time for each day
-            var day1 = response.list[0];
-            var day2 = response.list[8];
-            var day3 = response.list[16];
-            var day4 = response.list[24];
-            var day5 = response.list[32];
+            var forecastArray = [];
 
-            var forecastArray = [day1, day2, day3, day4, day5];
+            var currentDay = moment().format('DD');
+
+            response.list.forEach(interval => {
+                var forecastDay = moment(interval.dt_txt, 'YYYY-MM-DD HH:mm:ss').format('DD')
+                var forecastHour = moment(interval.dt_txt, 'YYYY-MM-DD HH:mm:ss').format('HH');
+
+                if (forecastDay != currentDay && forecastHour === "12") forecastArray.push(interval);
+            });
 
             for (var i = 0; i < forecastArray.length; i++) {
-                var nextDate = moment().add(i + 1, 'days');
+                var forecastDay = moment(forecastArray[i].dt_txt, 'YYYY-MM-DD HH:mm:ss')
 
-                // what's a better way to do this? add a class?
-                $(`#day-${i + 1}-date`).text(nextDate.format('dddd') + " " + nextDate.format('l'));
-                $(`#day-${i + 1}-icon`).removeClass();
-                $(`#day-${i + 1}-icon`).addClass(addIcon(forecastArray[i].weather[0].main));
-                //$(`#day-${i + 1}-icon`).className = addIcon(forecastArray[i].weather[0].main)
-                $(`#day-${i + 1}-icon`).addClass("fa-3x py-4");
-                $(`#day-${i + 1}-temp`).text("Temperature: " + convertTemp(forecastArray[i].main.temp));
-                $(`#day-${i + 1}-humid`).text("Humidity: " + forecastArray[i].main.humidity + "%");
-
-                // $(".forecast-date").text(nextDate.format('dddd') + " " + nextDate.format('l'));
-                // $(".forecast-icon").removeClass();
-                // $(".forecast-icon").addClass(addIcon(forecastArray[i].weather[0].main));
-                // $(".forecast-icon").addClass("fa-3x py-4");
-                // $(".forecast-temp").text("Temperature: " + convertTemp(forecastArray[i].main.temp));
-                // $(".forecast-humid").text("Humidity: " + forecastArray[i].main.humidity + "%");
+                $(forecastDate[i]).text(forecastDay.format('dddd') + " " + forecastDay.format('l'));
+                $(forecastIcon[i]).removeClass();
+                $(forecastIcon[i]).addClass(`${addIcon(forecastArray[i].weather[0].main)} fa-3x py-4 `);
+                $(forecastTemp[i]).text("Temperature: " + convertTemp(forecastArray[i].main.temp));
+                $(forecastHumid[i]).text("Humidity: " + forecastArray[i].main.humidity + "%");
             }
         });
     }
@@ -181,7 +172,7 @@ $(document).ready(function () {
             radioLabel.text(location);
 
             radioLabel.click(function () {
-                // console.log(location);
+                // console.log("The radio button has been clicked.");
                 renderDisplay(location);
             });
 
@@ -231,6 +222,9 @@ $(document).ready(function () {
 
         // sets the default weather display
         renderDisplay(recentLocations[0]);
+
+        // console.log("forecastDate Array:");
+        // console.log(forecastDate[0]);
     }
 
     main();

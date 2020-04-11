@@ -90,6 +90,8 @@ $(document).ready(function () {
         // queryURL for retrieving the current UV Index data for the coordinates
         var queryURL = `https://api.openweathermap.org/data/2.5/uvi?appid=${APIkey}&lat=${lat}&lon=${lon}`;
 
+        console.log(queryURL);
+
         $.ajax({
             url: queryURL,
             method: "GET"
@@ -106,6 +108,8 @@ $(document).ready(function () {
     function displayWeather(city) {
         // queryURL for retrieving the current weather data for the given city
         var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}`;
+
+        console.log(queryURL);
 
         $.ajax({
             url: queryURL,
@@ -128,6 +132,8 @@ $(document).ready(function () {
     function displayForecast(city) {
         // queryURL for retrieving the forecast weather data for the given city
         queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}`;
+
+        console.log(queryURL);
 
         $.ajax({
             url: queryURL,
